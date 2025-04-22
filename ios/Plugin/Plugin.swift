@@ -75,6 +75,10 @@ public class SpeechRecognition: CAPPlugin {
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             self.recognitionRequest?.shouldReportPartialResults = partialResults
 
+            if #available(iOS 13, *) {
+                recognitionRequest?.requiresOnDeviceRecognition = true
+            }
+
             let inputNode: AVAudioInputNode = self.audioEngine!.inputNode
             let format: AVAudioFormat = inputNode.outputFormat(forBus: 0)
 
