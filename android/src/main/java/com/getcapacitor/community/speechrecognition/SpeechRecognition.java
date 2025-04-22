@@ -168,7 +168,6 @@ public class SpeechRecognition extends Plugin implements Constants {
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, bridge.getActivity().getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, partialResults);
         intent.putExtra("android.speech.extra.DICTATION_MODE", partialResults);
-        intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
 
         if (prompt != null) {
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
@@ -186,6 +185,7 @@ public class SpeechRecognition extends Plugin implements Constants {
                         if (speechRecognizer == null) {
                             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(bridge.getActivity());
                             SpeechRecognitionListener listener = new SpeechRecognitionListener();
+                            intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
                             listener.setCall(call);
                             listener.setPartialResults(partialResults);
                             speechRecognizer.setRecognitionListener(listener);
