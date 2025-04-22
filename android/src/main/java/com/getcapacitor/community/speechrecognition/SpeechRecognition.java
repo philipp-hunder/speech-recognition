@@ -168,6 +168,7 @@ public class SpeechRecognition extends Plugin implements Constants {
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, bridge.getActivity().getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, partialResults);
         intent.putExtra("android.speech.extra.DICTATION_MODE", partialResults);
+        intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
 
         if (prompt != null) {
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
@@ -182,17 +183,18 @@ public class SpeechRecognition extends Plugin implements Constants {
                     try {
                         SpeechRecognition.this.lock.lock();
 
-                        if (speechRecognizer != null) {
-                            speechRecognizer.cancel();
-                            speechRecognizer.destroy();
-                            speechRecognizer = null;
+                        if (speechRecognizer == null) {
+                            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(bridge.getActivity());
+                            SpeechRecognitionListener listener = new SpeechRecognitionListener();
+                            listener.setCall(call);
+                            listener.setPartialResults(partialResults);
+                            speechRecognizer.setRecognitionListener(listener);
+                        } else {
+                            SpeechRecognitionListener listener = new SpeechRecognitionListener();
+                            listener.setCall(call);
+                            listener.setPartialResults(partialResults);
+                            speechRecognizer.setRecognitionListener(listener);
                         }
-
-                        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(bridge.getActivity());
-                        SpeechRecognitionListener listener = new SpeechRecognitionListener();
-                        listener.setCall(call);
-                        listener.setPartialResults(partialResults);
-                        speechRecognizer.setRecognitionListener(listener);
                         speechRecognizer.startListening(intent);
                         SpeechRecognition.this.listening(true);
                         if (partialResults) {
@@ -359,7 +361,7 @@ public class SpeechRecognition extends Plugin implements Constants {
                 message = "No speech input";
                 break;
             default:
-                message = "Didn't understand, please try again.";
+                message = "Didn't understand, please try again. Encountered: " + errorCode;
                 break;
         }
         return message;
