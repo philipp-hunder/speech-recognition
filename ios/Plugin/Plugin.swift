@@ -76,7 +76,7 @@ public class SpeechRecognition: CAPPlugin {
             self.recognitionRequest?.shouldReportPartialResults = partialResults
 
             if #available(iOS 13, *) {
-                recognitionRequest?.requiresOnDeviceRecognition = true
+                self.recognitionRequest?.requiresOnDeviceRecognition = true
             }
 
             let inputNode: AVAudioInputNode = self.audioEngine!.inputNode
